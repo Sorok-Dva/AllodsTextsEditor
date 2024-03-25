@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/materialize.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header" id="banner">
+        <div class="alert alert-dismissible alert-success" style="display: none"></div>
+      </div>
+      <div class="col-md-12 col-lg-12">
+        <h3>Notepad</h3>
+        <div class="form-group">
+          <label for="notepad"></label>
+          <textarea class="form-control" id="notepad" rows="6" style="min-height: 150px;"></textarea>
+        </div>
+        <div class="form-group">
+          <a href="#" class="btn btn-success"
+             onclick="ipcRenderer.send('notepad:save', {data: $('#notepad').val(), path});">Save</a>
+          <a href="#" class="btn btn-warning">Save & Build</a>
+          <a href="#" class="btn btn-danger"
+             onclick="ipcRenderer.send('action:closeWindow', { window: 'notepad' });">Close</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      const electron = require('electron')
+      const { ipcRenderer } = electron
+      let path
+      ipcRenderer.on('notepad:data', (e, res) => {
+        path = res.path
+        $('#notepad').empty().html(res.data)
+        $('label').empty().html(`Editing ${res.path}`)
+      })
+
+    </script>
+
+    <script>
+      if (typeof module === 'object') {
+        window.module = module
+        module = undefined
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script>if (window.module) module = window.module</script>
+  </body>
+</html>

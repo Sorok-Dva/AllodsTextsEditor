@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Add new text in client</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <form>
+        <div class="form-group">
+          <label for="path">Path</label>
+          <input type="text" id="path" autofocus>
+        </div>
+        <div class="form-group">
+          <label for="fileTitle">File Title (without .txt)</label>
+          <input type="text" id="fileTitle" autofocus>
+        </div>
+        <div class="form-group">
+          <label for="text">File content</label>
+          <textarea class="form-control" id="text" rows="6" style="min-height: 100px;" autofocus></textarea>
+        </div>
+        <button class="waves-effect waves-light btn" type="submit">Add text</button>
+      </form>
+    </div>
+
+    <script>
+      window.$ = window.jQuery = require('jquery')
+      const electron = require('electron')
+      const { ipcRenderer } = electron
+      $('form').submit((e) => {
+        e.preventDefault()
+        let path = $('#path').val()
+        let fileName = $('#fileTitle').val()
+        let text = $('#text').val()
+
+        ipcRenderer.send('add:file', { path, text, fileName })
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <form>
+        <div>
+          <label for="folder">Extracted texts folder (ex: C:\Texts\Extracted)</label>
+          <input type="text" id="folder" autofocus>
+        </div>
+        <button class="waves-effect waves-light btn" type="submit">OK</button>
+      </form>
+    </div>
+
+    <script>
+      const electron = require('electron')
+      const path = require('path')
+      const fs = require('fs')
+      const { ipcRenderer } = electron
+
+      fs.readFile(path.join(__dirname, '../../.path'), 'utf-8', (err, data) => {
+        $('#folder').val(data)
+      })
+      document.querySelector('form').addEventListener('submit', submitForm)
+
+      function submitForm(e) {
+        e.preventDefault()
+        const item = document.querySelector('#folder').value
+        fs.stat(item, (err, stats) => {
+          if (err) {
+            ipcRenderer.send('settings:errorMessage', 'Path not found.', 'Please choose a valid path.')
+            return;
+          }
+
+          if (stats.isFile() || stats.isDirectory()) {
+            ipcRenderer.send('settings:edit', item)
+          } else {
+            ipcRenderer.send('settings:errorMessage', 'Path not found.', 'Please choose a valid path.')
+          }
+        });
+      }
+    </script>
+
+    <script>
+      if (typeof module === 'object') {
+        window.module = module
+        module = undefined
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script>if (window.module) module = window.module</script>
+  </body>
+</html>
